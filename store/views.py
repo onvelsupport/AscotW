@@ -267,6 +267,9 @@ def contact(request):
 def privacy(request):
     return render(request, 'store/privacy.html')
 
+def faq(request):
+    return render(request, 'store/faq.html')
+
 
 def checkout_view(request):
     cart = request.session.get('cart', {})

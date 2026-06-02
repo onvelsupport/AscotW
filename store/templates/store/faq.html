@@ -1,0 +1,105 @@
+{% extends 'store/base.html' %}
+
+{% block title %}FAQ | CROWNVII{% endblock %}
+
+{% block extra_css %}
+<style>
+.faq-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
+}
+
+.faq-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.faq-header small {
+    letter-spacing: 6px;
+    font-size: 13px;
+    color: #666;
+}
+
+.faq-header h1 {
+    font-size: 56px;
+    margin: 12px 0 0;
+}
+
+.faq-item {
+    border-bottom: 1px solid #ddd;
+    padding: 26px 0;
+}
+
+.faq-item h3 {
+    font-size: 18px;
+    margin: 0 0 12px;
+}
+
+.faq-item p {
+    color: #555;
+    line-height: 1.8;
+    margin: 0;
+    font-size: 15px;
+}
+
+@media (max-width: 768px) {
+    .faq-page {
+        padding: 50px 20px 80px;
+    }
+
+    .faq-header h1 {
+        font-size: 38px;
+    }
+
+    .faq-item h3 {
+        font-size: 16px;
+    }
+
+    .faq-item p {
+        font-size: 14px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="faq-page">
+    <div class="faq-header">
+        <small>CROWNVII SUPPORT</small>
+        <h1>Frequently Asked Questions</h1>
+    </div>
+
+    <div class="faq-item">
+        <h3>How long does delivery take?</h3>
+        <p>UK delivery usually takes 1–3 business days after your order has been processed.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Do you offer international shipping?</h3>
+        <p>At the moment, CROWNVII primarily serves customers in the United Kingdom. International shipping may be added later.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Can I return my watch?</h3>
+        <p>Returns are accepted in line with our refund policy, provided the item is unused, undamaged, and returned in its original packaging.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How do I track my order?</h3>
+        <p>Once your order has been processed, tracking information will be sent to the email address used at checkout.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Are payments secure?</h3>
+        <p>Yes. Payments are processed securely through Stripe. CROWNVII does not store your card details.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>How can I contact support?</h3>
+        <p>You can contact us through the Contact Support page for order enquiries, delivery issues, or product questions.</p>
+    </div>
+</section>
+
+{% endblock %}

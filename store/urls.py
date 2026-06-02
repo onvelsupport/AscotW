@@ -23,6 +23,7 @@ urlpatterns = [
     path('terms/', views.terms, name='terms'),
     path('refund/', views.refund, name='refund'),
     path('privacy/', views.privacy, name='privacy'),
+    path('faq/', views.faq, name='faq'),
 
 
     path('search/', views.search, name='search'),
