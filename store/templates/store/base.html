@@ -65,6 +65,32 @@ header {
     color: #8b6b19;
 }
 
+.cart-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 50%;
+    background: #8b6b19;
+
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .mobile-menu {
     display: none;
     position: absolute;
@@ -199,10 +225,15 @@ footer {
   </a>
 
 <div class="icons">
-  <a href="{% url 'search' %}">⌕</a>
-  <a href="{% url 'cart' %}">
-    <i class="fa-solid fa-bag-shopping"></i>
-</a>
+    <a href="{% url 'search' %}">⌕</a>
+
+    <a href="{% url 'cart' %}" class="cart-icon">
+        <i class="fa-solid fa-bag-shopping"></i>
+
+        {% if cart_count > 0 %}
+            <span class="cart-count">{{ cart_count }}</span>
+        {% endif %}
+    </a>
 </div>
 
   <div class="mobile-menu" id="mobileMenu">
