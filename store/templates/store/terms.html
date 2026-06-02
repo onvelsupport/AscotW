@@ -1,88 +1,170 @@
 {% extends 'store/base.html' %}
 
+{% block title %}Terms & Conditions | CROWNVII{% endblock %}
+
 {% block extra_css %}
 <style>
-.page-title {
-  text-align: center;
-  font-family: 'Courier New', cursive;
-  font-size: 36px;
-  margin-top: 40px;
+.terms-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
 }
 
-.container {
-  max-width: 900px;
-  margin: 50px auto;
-  padding: 20px;
+.terms-header {
+    text-align: center;
+    margin-bottom: 60px;
 }
 
-.container h2 {
-  margin-top: 40px;
-  font-size: 20px;
+.terms-header small {
+    display: block;
+    letter-spacing: 6px;
+    font-size: 13px;
+    color: #666;
 }
 
-.container p {
-  font-size: 16px;
-  line-height: 1.8;
-  text-transform: uppercase;
+.terms-header h1 {
+    margin-top: 12px;
+    font-size: 56px;
 }
 
-hr {
-  margin: 40px 0;
+.terms-section {
+    margin-bottom: 40px;
+}
+
+.terms-section h2 {
+    font-size: 22px;
+    margin-bottom: 12px;
+}
+
+.terms-section p,
+.terms-section li {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #555;
+}
+
+.terms-section ul {
+    padding-left: 20px;
+}
+
+@media (max-width: 768px) {
+    .terms-page {
+        padding: 50px 20px 80px;
+    }
+
+    .terms-header h1 {
+        font-size: 38px;
+    }
+
+    .terms-section h2 {
+        font-size: 18px;
+    }
+
+    .terms-section p,
+    .terms-section li {
+        font-size: 14px;
+    }
 }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<h1 class="page-title">TERMS AND CONDITIONS</h1>
+<section class="terms-page">
 
-<div class="container">
+    <div class="terms-header">
+        <small>CROWNVII LEGAL</small>
+        <h1>Terms & Conditions</h1>
+    </div>
 
-  <h2>ACCEPTANCE OF TERMS</h2>
-  <p>
-    BY USING THIS WEBSITE, YOU AGREE TO COMPLY WITH AND BE BOUND BY THESE TERMS AND CONDITIONS.
-    IF YOU DO NOT AGREE WITH ANY PART OF THESE TERMS, PLEASE DO NOT USE OUR WEBSITE.
-  </p>
+    <div class="terms-section">
+        <h2>1. Introduction</h2>
+        <p>
+            These Terms & Conditions govern your use of the CROWNVII website and the purchase of products from us.
+            By accessing our website or placing an order, you agree to be bound by these terms.
+        </p>
+    </div>
 
-  <hr>
+    <div class="terms-section">
+        <h2>2. Orders</h2>
+        <p>
+            All orders are subject to acceptance and availability.
+            We reserve the right to refuse or cancel an order at our discretion.
+        </p>
+    </div>
 
-  <h2>SHIPPING</h2>
-  <p>
-    PLEASE ALLOW 1 WORKING DAY FOR ORDER PROCESSING AND 1–2 DAYS FOR SHIPMENT DELIVERY
-  </p>
+    <div class="terms-section">
+        <h2>3. Pricing</h2>
+        <p>
+            Prices displayed on our website are in GBP (£).
+            We reserve the right to change pricing without prior notice.
+        </p>
+    </div>
 
-  <p>
-    YOU WILL BE NOTIFIED VIA EMAIL ONCE YOUR ORDER HAS BEEN SHIPPED.
-  </p>
+    <div class="terms-section">
+        <h2>4. Payments</h2>
+        <p>
+            Payments are processed securely through trusted third-party payment providers.
+            CROWNVII does not store payment card information.
+        </p>
+    </div>
 
-  <p>
-    WE ARE NOT RESPONSIBLE FOR ANY STOLEN, DAMAGED, OR LOST PACKAGES ONCE THEY HAVE BEEN SHIPPED.
-  </p>
+    <div class="terms-section">
+        <h2>5. Shipping & Delivery</h2>
+        <p>
+            Delivery times are estimates and may vary depending on location,
+            courier delays, customs processes, or other circumstances outside our control.
+        </p>
+    </div>
 
-  <p>
-    WE ARE NOT RESPONSIBLE FOR RETURNED PACKAGES DUE TO AN INCORRECT ADDRESS.
-    PLEASE ENSURE THE CORRECT ADDRESS IS ENTERED TO AVOID RESHIPPING FEES BEING CHARGED.
-  </p>
+    <div class="terms-section">
+        <h2>6. Returns & Refunds</h2>
+        <p>
+            Please refer to our Refund Policy for details regarding returns,
+            exchanges, and eligibility requirements.
+        </p>
+    </div>
 
-  <p>
-    WE ARE NOT RESPONSIBLE FOR THE HANDLING OF IMPORT FEES FOR INTERNATIONAL ORDERS.
-  </p>
+    <div class="terms-section">
+        <h2>7. Product Information</h2>
+        <p>
+            We make every effort to ensure product descriptions and images are accurate.
+            However, colours, materials, and finishes may vary slightly due to screen settings and manufacturing differences.
+        </p>
+    </div>
 
-  <hr>
+    <div class="terms-section">
+        <h2>8. Intellectual Property</h2>
+        <p>
+            All content on this website, including logos, trademarks, images,
+            text, graphics, and designs, is the property of CROWNVII and may not be copied,
+            reproduced, or used without written permission.
+        </p>
+    </div>
 
-  <h2>RETURN POLICY</h2>
-  <p>
-    IF YOUR ORDER IS DEFECTIVE, INCORRECT, OR INCOMPLETE PLEASE CONTACT
-    HELLOHUSTLE123@GMAIL.COM WITHIN 48 HOURS OF DELIVERY SO WE MAY APPROPRIATELY REMEDY THE ISSUE FOR YOU
-  </p>
+    <div class="terms-section">
+        <h2>9. Limitation of Liability</h2>
+        <p>
+            To the maximum extent permitted by law, CROWNVII shall not be liable for indirect,
+            incidental, special, or consequential damages arising from the use of our products or website.
+        </p>
+    </div>
 
-  <hr>
+    <div class="terms-section">
+        <h2>10. Changes to These Terms</h2>
+        <p>
+            We reserve the right to amend these Terms & Conditions at any time.
+            Updated versions will be published on this page.
+        </p>
+    </div>
 
-  <h2>CONTACT US</h2>
-  <p>
-    IF YOU HAVE ANY QUESTIONS ABOUT YOUR ORDER, PLEASE EMAIL US AT HELLOHUSTLE123@GMAIL.COM
-  </p>
+    <div class="terms-section">
+        <h2>11. Contact Information</h2>
+        <p>
+            For any questions regarding these Terms & Conditions, please contact CROWNVII through our Contact Support page.
+        </p>
+    </div>
 
-</div>
+</section>
 
 {% endblock %}
