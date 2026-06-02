@@ -28,24 +28,37 @@
 .tabs {
     display: flex;
     justify-content: center;
+    gap: 110px;
     margin-top: 50px;
     font-size: 15px;
     font-weight: 700;
 }
 
-.tabs span {
-    color: #007a3d;
-    border-bottom: 3px solid #007a3d;
+.tab-item {
+    text-decoration: none;
+    color: #111;
     padding: 0 100px 18px;
+    border-bottom: 3px solid transparent;
 }
 
-.sort-bar {
+.tab-item:hover,
+.active-tab {
+    color: #007a3d;
+}
+
+.active-tab {
+    border-bottom: 3px solid #007a3d;
+}
+
+.filter-sort-bar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     padding: 45px 6% 30px;
 }
 
-.sort-bar select {
+.filter-left select,
+.sort-right select {
     border: none;
     background: transparent;
     font-size: 15px;
@@ -74,8 +87,8 @@
 
 .heart-form {
     position: absolute;
-    top: 35px;
-    left: 55px;
+    right: 25px;
+    bottom: 25px;
     z-index: 5;
 }
 
@@ -86,7 +99,6 @@
     font-size: 28px;
     font-weight: 900;
     color: #007a3d;
-    transition: 0.2s;
 }
 
 .heart:hover {
@@ -96,7 +108,6 @@
 .watch-info h2 {
     font-size: 22px;
     margin: 0 0 8px;
-    line-height: 1.2;
 }
 
 .watch-info p {
@@ -126,21 +137,19 @@
 
 .promo-card h2 {
     font-size: 22px;
-    margin-bottom: 8px;
 }
 
 .promo-card p {
     font-size: 14px;
-    line-height: 1.5;
 }
 
 @media (max-width: 900px) {
     .page-hero {
-        padding: 45px 16px 35px;
+        padding: 40px 16px 30px;
     }
 
     .page-hero small {
-        font-size: 12px;
+        font-size: 11px;
         letter-spacing: 4px;
     }
 
@@ -149,59 +158,66 @@
     }
 
     .tabs {
-        font-size: 13px;
+        gap: 35px;
         margin-top: 35px;
-    }
-
-    .tabs span {
-        padding: 0 25px 12px;
-    }
-
-    .sort-bar {
-        justify-content: flex-end;
-        padding: 30px 16px 25px;
-    }
-
-    .sort-bar select {
         font-size: 13px;
+    }
+
+    .tab-item {
+        padding: 0 20px 12px;
+    }
+
+    .filter-sort-bar {
+        padding: 28px 16px 22px;
+    }
+
+    .filter-left select,
+    .sort-right select {
+        font-size: 13px;
+        max-width: 150px;
     }
 
     .watch-grid {
-        grid-template-columns: 1fr;
-        padding: 0 16px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 0 12px;
     }
 
     .watch-card {
         grid-template-columns: 1fr;
-        min-height: auto;
-        padding: 50px 24px 30px;
-    }
-
-    .heart-form {
-        left: 24px;
-        top: 24px;
-    }
-
-    .heart {
-        font-size: 22px;
+        padding: 20px 12px;
+        min-height: 260px;
     }
 
     .watch-info h2 {
-        font-size: 20px;
+        font-size: 16px;
     }
 
     .watch-info p {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .watch-img img {
-        max-height: 240px;
-        margin-top: 20px;
+        max-height: 150px;
+        width: 100%;
+        object-fit: contain;
+        margin-top: 10px;
+    }
+
+    .heart-form {
+        top: auto;
+        right: 12px;
+        bottom: 12px;
+        left: auto;
+    }
+
+    .heart {
+        font-size: 20px;
     }
 
     .promo-card {
-        min-height: 300px;
-        padding: 35px 24px;
+        min-height: 260px;
+        padding: 24px 16px;
     }
 }
 </style>
@@ -211,23 +227,38 @@
 
 <section class="page-hero">
     <small>CROWNVII WATCHES</small>
-    <h1>All models</h1>
+    <h1>All Models</h1>
 
     <div class="tabs">
-        <span>Model view</span>
-    </div>
+    <a href="{% url 'home' %}" class="tab-item active-tab">
+        Model View
+    </a>
+
+    <a href="{% url 'favourites' %}" class="tab-item">
+        Favourites
+    </a>
+</div>
 </section>
 
 <section class="filter-sort-bar">
 
     <div class="filter-left">
-        <button type="button" class="filter-btn">
-            Filters ⚙
-        </button>
+        <form method="get">
+            <input type="hidden" name="sort" value="{{ current_sort }}">
+
+            <select name="gender" onchange="this.form.submit()">
+                <option value="">All Watches</option>
+                <option value="men" {% if current_gender == 'men' %}selected{% endif %}>Men's Watches</option>
+                <option value="women" {% if current_gender == 'women' %}selected{% endif %}>Women's Watches</option>
+                <option value="unisex" {% if current_gender == 'unisex' %}selected{% endif %}>Unisex Watches</option>
+            </select>
+        </form>
     </div>
 
     <div class="sort-right">
         <form method="get">
+            <input type="hidden" name="gender" value="{{ current_gender }}">
+
             <select name="sort" onchange="this.form.submit()">
                 <option value="new" {% if current_sort == 'new' %}selected{% endif %}>New In</option>
                 <option value="price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
@@ -273,7 +304,6 @@
         <div class="watch-card">
             <div class="watch-info">
                 <h2>No watches yet</h2>
-                <p>Add watches from your Django admin panel.</p>
             </div>
         </div>
     {% endfor %}
