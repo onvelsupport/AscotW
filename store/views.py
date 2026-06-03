@@ -497,7 +497,6 @@ def square_checkout(request, order_id):
         return redirect('checkout_success')
 
     environment = SquareEnvironment.SANDBOX
-
     if settings.SQUARE_ENVIRONMENT == "production":
         environment = SquareEnvironment.PRODUCTION
 
@@ -506,44 +505,19 @@ def square_checkout(request, order_id):
         environment=environment
     )
 
-    line_items = []
-
-    for item in order.items.all():
-        product_name = item.product.name
-
-        if item.size:
-            product_name = f"{product_name} - Size {item.size}"
-
-        line_items.append({
-            "name": product_name,
-            "quantity": str(item.quantity),
-            "base_price_money": {
-                "amount": int(item.price * 100),
-                "currency": "GBP"
-            }
-        })
-
     result = client.checkout.payment_links.create(
-        body={
-            "idempotency_key": str(uuid.uuid4()),
-            "order": {
-                "location_id": settings.SQUARE_LOCATION_ID,
-                "line_items": line_items
+        idempotency_key=str(uuid.uuid4()),
+        quick_pay={
+            "name": f"CROWNVII Order #{order.order_number}",
+            "price_money": {
+                "amount": int(order.total_price * 100),
+                "currency": "GBP",
             },
-            "checkout_options": {
-                "redirect_url": request.build_absolute_uri('/checkout/success/')
-            },
-            "pre_populated_data": {
-                "buyer_email": order.email
-            }
-        }
+            "location_id": settings.SQUARE_LOCATION_ID,
+        },
+        checkout_options={
+            "redirect_url": request.build_absolute_uri("/checkout/success/")
+        },
     )
 
-    if result.is_success():
-        payment_link = result.body["payment_link"]
-        return redirect(payment_link["url"])
-
-    return render(request, 'store/choose_payment.html', {
-        'order': order,
-        'error': result.errors
-    })
+    return redirect(result.payment_link.url)
