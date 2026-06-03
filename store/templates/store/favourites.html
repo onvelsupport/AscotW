@@ -247,10 +247,11 @@
             <input type="hidden" name="sort" value="{{ current_sort }}">
 
             <select name="gender" onchange="this.form.submit()">
-                <option value="">All Watches</option>
+                <option value="">All Items</option>
                 <option value="men" {% if current_gender == 'men' %}selected{% endif %}>Men's Watches</option>
                 <option value="women" {% if current_gender == 'women' %}selected{% endif %}>Women's Watches</option>
                 <option value="unisex" {% if current_gender == 'unisex' %}selected{% endif %}>Unisex Watches</option>
+                <option value="giftitems" {% if current_gender == 'giftitems' %}selected{% endif %}>Gift Items</option>
             </select>
         </form>
     </div>
