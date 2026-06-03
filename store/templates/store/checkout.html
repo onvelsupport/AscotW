@@ -76,6 +76,19 @@
     text-decoration: underline;
 }
 
+.cancel-btn {
+    display: block;
+    width: fit-content;
+    margin: 18px auto 0;
+    color: #000;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+}
+
   .summary-box {
     background: white;
     padding: 25px;
@@ -246,9 +259,9 @@ document.addEventListener("DOMContentLoaded", function () {
             Pay with Square
         </a>
 
-        <a href="{% url 'checkout' %}" class="cancel-btn">
-            Cancel
-        </a>
+        <button type="button" onclick="history.back()" class="cancel-btn" style="background:none;border:none;cursor:pointer;">
+    Cancel
+</button>
     </div>
 </div>
 {% endif %}

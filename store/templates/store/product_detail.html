@@ -1,309 +1,313 @@
 {% extends 'store/base.html' %}
 
+{% block title %}{{ product.name }} | CROWNVII{% endblock %}
+
 {% block extra_css %}
 <style>
-  .product-detail-container {
-    max-width: 1100px;
+.product-detail-container {
+    max-width: 1200px;
     margin: 60px auto;
-    padding: 0 40px 60px;
-  }
+    padding: 0 40px 70px;
+}
 
-  .product-detail {
+.product-detail {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 50px;
+    gap: 60px;
     align-items: start;
-  }
+}
 
-  .product-images {
+.product-images {
     display: flex;
     flex-direction: column;
     gap: 15px;
-  }
+}
 
-  #mainImage {
+#mainImage {
     width: 100%;
-    max-width: 500px;
-    background: #ddd;
-  }
+    max-width: 520px;
+    max-height: 600px;
+    object-fit: contain;
+    background: #f5f5f5;
+}
 
-  .thumbnail-row {
+.thumbnail-row {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
-  }
+}
 
-  .thumbnail-row img {
-    width: 70px;
-    height: 70px;
+.thumbnail-row img {
+    width: 72px;
+    height: 72px;
     object-fit: cover;
     cursor: pointer;
     border: 1px solid #ddd;
-  }
+    background: #f5f5f5;
+}
 
-  .thumbnail-row img:hover {
-    border: 1px solid black;
-  }
+.thumbnail-row img:hover {
+    border-color: #007a3d;
+}
 
-  .product-info {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .product-info h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
+.product-info h1 {
+    font-size: 32px;
+    margin: 0 0 18px;
     text-transform: uppercase;
-    font-family: 'Courier New', monospace;
-  }
+    letter-spacing: 1px;
+}
 
-  .price {
-    font-size: 20px;
-    margin-bottom: 20px;
-    font-family: 'Courier New', monospace;
-  }
+.price {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 28px;
+}
 
-  .size-section {
-    margin-bottom: 20px;
-  }
+.size-section {
+    margin-bottom: 25px;
+}
 
-  .size-label {
-    font-size: 14px;
-    margin-bottom: 10px;
+.size-label {
+    font-size: 13px;
+    margin-bottom: 12px;
     text-transform: uppercase;
-    font-family: 'Courier New', monospace;
-  }
+    font-weight: 700;
+}
 
-  .size-options {
+.size-options {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-  }
+}
 
-  .size-options input {
+.size-options input {
     display: none;
-  }
+}
 
-  .size-options span {
-    width: 65px;
-    height: 65px;
+.size-options span,
+.size-disabled {
+    width: 64px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid black;
-    font-family: 'Courier New', monospace;
-  }
+    border: 1px solid #111;
+    font-size: 14px;
+    cursor: pointer;
+}
 
-  .size-options input:checked + span {
-    background: black;
-    color: white;
-  }
+.size-options input:checked + span {
+    background: #111;
+    color: #fff;
+}
 
-  .size-disabled {
-    width: 65px;
-    height: 65px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #ccc;
+.size-disabled {
+    border-color: #ccc;
     color: #999;
-  }
+    cursor: not-allowed;
+}
 
-  .status {
-    margin: 10px 0 20px;
-    font-size: 14px;
+.status {
+    margin: 10px 0 24px;
+    font-size: 13px;
     text-transform: uppercase;
-    font-family: 'Courier New', monospace;
-  }
+    font-weight: 700;
+    color: #007a3d;
+}
 
-  .buy-btn {
-    width: 240px;
-    padding: 14px;
-    background: black;
-    color: white;
+.status.sold {
+    color: #999;
+}
+
+.buy-btn {
+    width: 260px;
+    padding: 15px;
+    background: #111;
+    color: #fff;
     border: none;
-    font-family: 'Courier New', monospace;
-    margin-bottom: 25px;
-  }
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 30px;
+}
 
-  .buy-btn:disabled {
+.buy-btn:hover {
+    background: #007a3d;
+}
+
+.buy-btn:disabled {
     background: #999;
-  }
+    cursor: not-allowed;
+}
 
-  .description {
-    font-size: 14px;
+.description {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 35px;
+}
+
+.details-panel {
+    border-top: 1px solid #ddd;
+}
+
+.detail-row {
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-row h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
     text-transform: uppercase;
-    font-family: 'Courier New', monospace;
-    line-height: 1.7;
-  }
+}
 
-  @media (max-width: 800px) {
-    .product-detail {
-      grid-template-columns: 1fr;
-      gap: 25px;
+.detail-row p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.7;
+}
+
+@media (max-width: 800px) {
+    .product-detail-container {
+        margin: 35px auto;
+        padding: 0 18px 60px;
     }
 
-    .product-detail-container {
-      padding: 0 20px;
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    #mainImage {
+        max-height: 420px;
     }
 
     .product-info h1 {
-      font-size: 22px;
+        font-size: 24px;
     }
-  }
+
+    .price {
+        font-size: 18px;
+    }
+
+    .buy-btn {
+        width: 100%;
+    }
+}
 </style>
 {% endblock %}
 
-
 {% block content %}
+
 <div class="product-detail-container">
-  <div class="product-detail">
+    <div class="product-detail">
 
-    <!-- IMAGES -->
-    <div class="product-images">
-      <img id="mainImage" src="{{ product.image.url }}" alt="{{ product.name }}">
+        <div class="product-images">
+            {% if product.image %}
+                <img id="mainImage" src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <div id="mainImage" style="height:500px;display:flex;align-items:center;justify-content:center;">
+                    CROWNVII
+                </div>
+            {% endif %}
 
-      <div class="thumbnail-row">
-        <img src="{{ product.image.url }}" onclick="changeImage(this)">
-
-        {% for img in product.images.all %}
-          <img src="{{ img.image.url }}" onclick="changeImage(this)">
-        {% endfor %}
-      </div>
-    </div>
-
-    <!-- PRODUCT INFO -->
-    <div class="product-info">
-
-      <!-- NAME -->
-      <h1>{{ product.name }}</h1>
-
-      <!-- PRICE -->
-      <p class="price">£{{ product.price }}</p>
-
-      {% if product.sold_out %}
-
-        <!-- SIZES -->
-        {% if product.sizes.exists %}
-        <div class="size-section">
-          <p class="size-label">SELECT SIZE</p>
-          <div class="size-options">
-            {% for size in product.sizes.all %}
-              <span class="size-disabled">{{ size.size }}</span>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
-
-        <!-- STATUS -->
-        <p class="status">SOLD OUT</p>
-
-        <!-- BUTTON -->
-        <button class="buy-btn" disabled>SOLD OUT</button>
-
-      {% else %}
-
-        <form method="post" action="{% url 'add_to_cart' product.id %}">
-          {% csrf_token %}
-
-          <!-- SIZES -->
-          {% if product.sizes.exists %}
-          <div class="size-section">
-            <p class="size-label">SELECT SIZE</p>
-            <div class="size-options">
-              {% for size in product.sizes.all %}
-                {% if size.stock > 0 %}
-                  <label>
-                    <input type="radio" name="size" value="{{ size.size }}" required>
-                    <span>{{ size.size }}</span>
-                  </label>
-                {% else %}
-                  <span class="size-disabled">{{ size.size }}</span>
+            <div class="thumbnail-row">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" onclick="changeImage(this)" alt="{{ product.name }}">
                 {% endif %}
-              {% endfor %}
+
+                {% for img in product.images.all %}
+                    <img src="{{ img.image.url }}" onclick="changeImage(this)" alt="{{ img.alt_text|default:product.name }}">
+                {% endfor %}
             </div>
-          </div>
-          {% endif %}
+        </div>
 
-          <!-- STATUS -->
-          <p class="status">AVAILABLE</p>
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
 
-          <!-- BUTTON -->
-          <button type="submit" class="buy-btn">ADD TO CART</button>
-        </form>
+            <p class="price">£{{ product.price }}</p>
 
-      {% endif %}
-
-      <!-- DESCRIPTION (LAST) -->
-      <p class="description">
-        {% if product.description %}
-          {{ product.description }}
-        {% else %}
-          NO DESCRIPTION AVAILABLE.
-        {% endif %}
-      </p>
-
-       <h1>{{ product.name }}</h1>
-
-        <p class="product-price">£{{ product.price }}</p>
-
-        <p class="product-description">
-            {{ product.description }}
-        </p>
-
-        {% if product.sold_out %}
-            <button class="sold-out-btn" disabled>Sold Out</button>
-        {% else %}
-            <form method="post" action="{% url 'add_to_cart' product.id %}">
-                {% csrf_token %}
+            {% if product.sold_out %}
 
                 {% if product.sizes.exists %}
-                    <div class="size-box">
-                        <label for="size">Select Size</label>
-                        <select name="size" id="size" required>
-                            <option value="">Choose an option</option>
+                    <div class="size-section">
+                        <p class="size-label">Select Size</p>
+
+                        <div class="size-options">
                             {% for size in product.sizes.all %}
-                                {% if size.stock > 0 %}
-                                    <option value="{{ size.size }}">{{ size.size }}</option>
-                                {% endif %}
+                                <span class="size-disabled">{{ size.size }}</span>
                             {% endfor %}
-                        </select>
+                        </div>
                     </div>
                 {% endif %}
 
-                <button type="submit" class="add-btn">Add to Bag</button>
-            </form>
-        {% endif %}
+                <p class="status sold">Sold Out</p>
+                <button class="buy-btn" disabled>Sold Out</button>
 
-        <p class="product-note">
-            Secure checkout. Carefully packaged and prepared for dispatch by CROWNVII.
-        </p>
+            {% else %}
 
-        <div class="details-panel">
-            <div class="detail-row">
-                <h3>Delivery</h3>
-                <p>UK delivery times and options are shown at checkout.</p>
-            </div>
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
 
-            <div class="detail-row">
-                <h3>Returns</h3>
-                <p>Returns are accepted in line with our refund policy.</p>
-            </div>
+                    {% if product.sizes.exists %}
+                        <div class="size-section">
+                            <p class="size-label">Select Size</p>
 
-            <div class="detail-row">
-                <h3>Support</h3>
-                <p>For help with your order, contact the CROWNVII support team.</p>
+                            <div class="size-options">
+                                {% for size in product.sizes.all %}
+                                    {% if size.stock > 0 %}
+                                        <label>
+                                            <input type="radio" name="size" value="{{ size.size }}" required>
+                                            <span>{{ size.size }}</span>
+                                        </label>
+                                    {% else %}
+                                        <span class="size-disabled">{{ size.size }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <p class="status">Available</p>
+                    <button type="submit" class="buy-btn">Add to Cart</button>
+                </form>
+
+            {% endif %}
+
+            <p class="description">
+                {% if product.description %}
+                    {{ product.description }}
+                {% else %}
+                    No description available.
+                {% endif %}
+            </p>
+
+            <div class="details-panel">
+                <div class="detail-row">
+                    <h3>Delivery</h3>
+                    <p>UK delivery times and options are shown at checkout.</p>
+                </div>
+
+                <div class="detail-row">
+                    <h3>Returns</h3>
+                    <p>Returns are accepted in line with our refund policy.</p>
+                </div>
+
+                <div class="detail-row">
+                    <h3>Support</h3>
+                    <p>For help with your order, contact the CROWNVII support team.</p>
+                </div>
             </div>
         </div>
-    </div>
 
     </div>
-  </div>
 </div>
 
 <script>
 function changeImage(el) {
-  document.getElementById("mainImage").src = el.src;
+    document.getElementById("mainImage").src = el.src;
 }
 </script>
+
 {% endblock %}
