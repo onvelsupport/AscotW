@@ -523,7 +523,7 @@ def square_checkout(request, order_id):
             }
         })
 
-    result = client.checkout.create_payment_link(
+    result = client.checkout.payment_links.create(
         body={
             "idempotency_key": str(uuid.uuid4()),
             "order": {
