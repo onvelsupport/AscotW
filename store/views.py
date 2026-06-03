@@ -3,7 +3,8 @@ from django.conf import settings
 from decimal import Decimal
 import stripe
 
-from square.client import Client
+from square import Square
+from square.environment import SquareEnvironment
 import uuid
 
 from django.http import HttpResponse
@@ -495,9 +496,14 @@ def square_checkout(request, order_id):
     if order.is_paid:
         return redirect('checkout_success')
 
-    client = Client(
-        access_token=settings.SQUARE_ACCESS_TOKEN,
-        environment=getattr(settings, 'SQUARE_ENVIRONMENT', 'sandbox')
+    environment = SquareEnvironment.SANDBOX
+
+    if settings.SQUARE_ENVIRONMENT == "production":
+        environment = SquareEnvironment.PRODUCTION
+
+    client = Square(
+        token=settings.SQUARE_ACCESS_TOKEN,
+        environment=environment
     )
 
     line_items = []
