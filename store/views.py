@@ -4,6 +4,11 @@ from datetime import date, timedelta
 from decimal import Decimal
 import stripe
 
+import hmac
+import hashlib
+import base64
+import urllib.request
+
 import json
 from square.utils.webhooks_helper import verify_signature
 
@@ -507,113 +512,87 @@ def stripe_checkout(request, order_id):
         })
     
 
-def square_checkout(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-
-    if order.is_paid:
-        return redirect('checkout_success')
-
-    environment = SquareEnvironment.SANDBOX
-    if settings.SQUARE_ENVIRONMENT == "production":
-        environment = SquareEnvironment.PRODUCTION
-
-    client = Square(
-        token=settings.SQUARE_ACCESS_TOKEN,
-        environment=environment
-    )
-
-    line_items = []
-
-    for item in order.items.all():
-        product_name = item.product.name
-
-        if item.size:
-            product_name = f"{product_name} - Size {item.size}"
-
-        line_items.append({
-            "name": product_name,
-            "quantity": str(item.quantity),
-            "base_price_money": {
-                "amount": int(item.price * 100),
-                "currency": "GBP"
-            }
-        })
-
-    result = client.checkout.payment_links.create(
-        idempotency_key=str(uuid.uuid4()),
-        order={
-            "location_id": settings.SQUARE_LOCATION_ID,
-            "line_items": line_items,
-            "reference_id": str(order.id),
-        },
-        checkout_options={
-            "redirect_url": request.build_absolute_uri("/checkout/success/")
-        },
-        pre_populated_data={
-            "buyer_email": order.email
-        }
-    )
-
-    return redirect(result.payment_link.url)
-
 @csrf_exempt
 def square_webhook(request):
     if request.method != "POST":
         return HttpResponse(status=405)
 
-    signature = request.headers.get("x-square-hmacsha256-signature")
     body = request.body.decode("utf-8")
+    signature = request.headers.get("x-square-hmacsha256-signature", "")
 
-    is_valid = verify_signature(
-    request_body=body,
-    signature_header=signature,
-    signature_key=settings.SQUARE_WEBHOOK_SIGNATURE_KEY,
-    notification_url=settings.SQUARE_WEBHOOK_URL,
-)
+    message = settings.SQUARE_WEBHOOK_URL + body
 
-    if not is_valid:
+    expected_signature = base64.b64encode(
+        hmac.new(
+            settings.SQUARE_WEBHOOK_SIGNATURE_KEY.encode("utf-8"),
+            message.encode("utf-8"),
+            hashlib.sha256
+        ).digest()
+    ).decode("utf-8")
+
+    if not hmac.compare_digest(expected_signature, signature):
+        print("Invalid Square webhook signature")
         return HttpResponse(status=403)
 
     event = json.loads(body)
     event_type = event.get("type")
 
-    if event_type == "payment.created" or event_type == "payment.updated":
-        payment = event.get("data", {}).get("object", {}).get("payment", {})
+    if event_type not in ["payment.created", "payment.updated"]:
+        return HttpResponse(status=200)
 
-        order_id = payment.get("order_id")
+    payment = event.get("data", {}).get("object", {}).get("payment", {})
 
-        # Square order_id is not your Django order id,
-        # so we need reference_id from the Square order.
-        square_order_id = payment.get("order_id")
+    if payment.get("status") != "COMPLETED":
+        return HttpResponse(status=200)
 
-        if square_order_id:
-            environment = SquareEnvironment.SANDBOX
-            if settings.SQUARE_ENVIRONMENT == "production":
-                environment = SquareEnvironment.PRODUCTION
+    square_order_id = payment.get("order_id")
 
-            client = Square(
-                token=settings.SQUARE_ACCESS_TOKEN,
-                environment=environment
-            )
+    if not square_order_id:
+        print("No Square order ID found")
+        return HttpResponse(status=200)
 
-            square_order = client.orders.get(order_id=square_order_id)
+    square_api_url = f"https://connect.squareup.com/v2/orders/{square_order_id}"
 
-            reference_id = square_order.order.reference_id
+    req = urllib.request.Request(
+        square_api_url,
+        headers={
+            "Authorization": f"Bearer {settings.SQUARE_ACCESS_TOKEN}",
+            "Square-Version": "2026-05-20",
+            "Content-Type": "application/json",
+        }
+    )
 
-            if reference_id:
-                try:
-                    order = Order.objects.get(id=reference_id)
+    try:
+        with urllib.request.urlopen(req) as response:
+            square_order_data = json.loads(response.read().decode("utf-8"))
+    except Exception as e:
+        print("Could not retrieve Square order:", str(e))
+        return HttpResponse(status=200)
 
-                    if not order.is_paid:
-                        order.is_paid = True
-                        order.save()
+    square_order = square_order_data.get("order", {})
+    django_order_id = square_order.get("reference_id")
 
-                        try:
-                            send_order_confirmation_email(order, {})
-                        except Exception as e:
-                            print("Square email failed:", str(e))
+    if not django_order_id:
+        print("No Django order ID found in Square reference_id")
+        return HttpResponse(status=200)
 
-                except Order.DoesNotExist:
-                    print("Order not found:", reference_id)
+    try:
+        order = Order.objects.get(id=django_order_id)
+
+        if not order.is_paid:
+            order.is_paid = True
+            order.save()
+            print("Square order marked as paid:", order.order_number)
+
+            try:
+                send_order_confirmation_email(order, {})
+                print("Square confirmation email sent to:", order.email)
+            except Exception as e:
+                print("Square email failed:", str(e))
+        else:
+            print("Square order already paid:", order.order_number)
+
+    except Order.DoesNotExist:
+        print("Django order not found:", django_order_id)
 
     return HttpResponse(status=200)

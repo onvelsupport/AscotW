@@ -127,7 +127,7 @@ SQUARE_ENVIRONMENT = os.getenv("SQUARE_ENVIRONMENT", "production")
 SQUARE_WEBHOOK_SIGNATURE_KEY = os.getenv("SQUARE_WEBHOOK_SIGNATURE_KEY")
 SQUARE_WEBHOOK_URL = os.getenv(
     "SQUARE_WEBHOOK_URL",
-    "https://crownvii-1.onrender.com/square/webhook/"
+    "https://www.crownvii.com/square/webhook/"
 )
 
 
