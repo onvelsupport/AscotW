@@ -1,112 +1,147 @@
 {% extends 'store/base.html' %}
 
-{% block title %}Order Confirmed | CROWNVII{% endblock %}
+{% block content %}
+<div class="success-overlay">
+    <div class="success-popup">
 
-{% block extra_css %}
+        <div class="success-checkmark">
+            <div class="check-icon"></div>
+        </div>
+
+        <h1>ORDER CONFIRMED</h1>
+
+        <p>
+            Thank you for choosing CROWNVII.<br>
+            Your order has been successfully received.
+        </p>
+
+        <a href="{% url 'home' %}" class="success-btn">
+            CONTINUE SHOPPING
+        </a>
+
+    </div>
+</div>
+
 <style>
-.success-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 90px 24px 120px;
-    text-align: center;
-}
-
-.success-icon {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 30px;
-    border-radius: 50%;
-    background: #007a3d;
-    color: white;
+.success-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 9999;
+}
+
+.success-popup {
+    background: #fff;
+    width: 90%;
+    max-width: 560px;
+    padding: 40px;
+    text-align: center;
+}
+
+.success-checkmark {
+    width: 70px;
+    height: 70px;
+    border: 3px solid #000;
+    border-radius: 50%;
+    margin: 0 auto 25px;
+    position: relative;
+    animation: popIn .4s ease forwards;
+}
+
+.check-icon {
+    width: 22px;
+    height: 40px;
+    border-right: 4px solid #000;
+    border-bottom: 4px solid #000;
+    position: absolute;
+    left: 22px;
+    top: 8px;
+    transform: rotate(45deg) scale(0);
+    animation: drawTick .35s ease .35s forwards;
+}
+
+.success-popup h1 {
     font-size: 34px;
+    margin: 0 0 18px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    line-height: 1.1;
 }
 
-.success-page small {
-    display: block;
-    letter-spacing: 6px;
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 12px;
-}
-
-.success-page h1 {
-    font-size: 56px;
-    margin: 0 0 20px;
-}
-
-.success-page p {
-    max-width: 620px;
-    margin: 0 auto 18px;
-    font-size: 16px;
-    line-height: 1.8;
-    color: #555;
-}
-
-.success-actions {
-    margin-top: 45px;
-    display: flex;
-    justify-content: center;
-    gap: 18px;
-    flex-wrap: wrap;
+.success-popup p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
 }
 
 .success-btn {
-    display: inline-block;
-    padding: 15px 28px;
-    background: #007a3d;
+    display: block;
+    width: 100%;
+    background: #000;
     color: #fff;
+    text-decoration: none;
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 16px;
     font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    transition: opacity .2s ease;
+    box-sizing: border-box;
 }
 
-.success-btn.secondary {
-    background: #111;
+.success-btn:hover {
+    opacity: 0.9;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes drawTick {
+    0% {
+        transform: rotate(45deg) scale(0);
+    }
+
+    100% {
+        transform: rotate(45deg) scale(1);
+    }
 }
 
 @media (max-width: 768px) {
-    .success-page {
-        padding: 60px 20px 90px;
+    .success-popup {
+        padding: 35px 25px;
     }
 
-    .success-page h1 {
-        font-size: 38px;
+    .success-popup h1 {
+        font-size: 28px;
+        letter-spacing: 2px;
     }
 
-    .success-actions {
-        flex-direction: column;
+    .success-popup p {
+        font-size: 16px;
+    }
+
+    .success-btn {
+        font-size: 15px;
     }
 }
 </style>
-{% endblock %}
-
-{% block content %}
-
-<section class="success-page">
-
-    <div class="success-icon">✓</div>
-
-    <small>CROWNVII</small>
-    <h1>Order Confirmed</h1>
-
-    <p>
-        Thank you for your purchase. Your order has been received successfully.
-    </p>
-
-    <p>
-        A confirmation email will be sent to you shortly with your order details.
-    </p>
-
-    <p>
-        Our team will begin processing your CROWNVII timepiece and prepare it for dispatch.
-    </p>
-
-    <div class="success-actions">
-        <a href="{% url 'home' %}" class="success-btn">Continue Shopping</a>
-        <a href="{% url 'contact' %}" class="success-btn secondary">Contact Support</a>
-    </div>
-
-</section>
-
 {% endblock %}
