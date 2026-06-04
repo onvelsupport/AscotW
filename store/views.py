@@ -371,6 +371,13 @@ def checkout_success(request):
     return render(request, 'store/checkout_success.html')
 
 
+def collection(request):
+    products = Product.objects.all().order_by('-created_at')
+
+    return render(request, 'store/collection.html', {
+        'products': products
+    })
+
 @csrf_exempt
 def stripe_webhook(request):
     print("Webhook endpoint hit")
