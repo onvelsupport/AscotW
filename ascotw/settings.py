@@ -19,7 +19,7 @@ ALLOWED_HOSTS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://ascotw.onrender.com',
+    'https://ascotw.onrender.com/',
     'https://www.ascotw.com',
     'https://ascotw.com',
 ]
