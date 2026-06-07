@@ -15,13 +15,13 @@ ALLOWED_HOSTS = [
     'localhost',
     'ascotw.onrender.com',
     'www.ascotwatches.com',
-    'ascotw.com',
+    'ascotwatches.com',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://ascotw.onrender.com/',
     'https://www.ascotwatches.com',
-    'https://ascotw.com',
+    'https://ascotwatches.com',
 ]
 
 INSTALLED_APPS = [
