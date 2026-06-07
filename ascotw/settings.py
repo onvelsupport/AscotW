@@ -14,13 +14,13 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'ascotw.onrender.com',
-    'www.ascotw.com',
+    'www.ascotwatches.com',
     'ascotw.com',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://ascotw.onrender.com/',
-    'https://www.ascotw.com',
+    'https://www.ascotwatches.com',
     'https://ascotw.com',
 ]
 
