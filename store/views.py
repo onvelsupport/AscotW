@@ -539,7 +539,7 @@ def square_checkout(request, order_id):
         return redirect('checkout_success')
 
     environment = SquareEnvironment.SANDBOX
-    if settings.SQUARE_ENVIRONMENT == "production":
+    if settings.SQUARE_ENVIRONMENT.lower() == "production":
         environment = SquareEnvironment.PRODUCTION
 
     client = Square(
@@ -564,22 +564,38 @@ def square_checkout(request, order_id):
             }
         })
 
-    result = client.checkout.payment_links.create(
-        idempotency_key=str(uuid.uuid4()),
-        order={
-            "location_id": settings.SQUARE_LOCATION_ID,
-            "line_items": line_items,
-            "reference_id": str(order.id),
-        },
-        checkout_options={
-            "redirect_url": request.build_absolute_uri("/checkout/success/")
-        },
-        pre_populated_data={
-            "buyer_email": order.email
-        }
-    )
+    try:
+        result = client.checkout.payment_links.create(
+            idempotency_key=str(uuid.uuid4()),
+            order={
+                "location_id": settings.SQUARE_LOCATION_ID,
+                "line_items": line_items,
+                "reference_id": str(order.id),
+            },
+            checkout_options={
+                "redirect_url": request.build_absolute_uri("/checkout/success/")
+            },
+            pre_populated_data={
+                "buyer_email": order.email
+            }
+        )
 
-    return redirect(result.payment_link.url)
+        print("Square result:", result)
+
+        if not result.payment_link:
+            return render(request, 'store/choose_payment.html', {
+                'order': order,
+                'error': 'Square could not create payment link. Check your Square credentials and Location ID.'
+            })
+
+        return redirect(result.payment_link.url)
+
+    except Exception as e:
+        print("Square checkout error:", str(e))
+        return render(request, 'store/choose_payment.html', {
+            'order': order,
+            'error': str(e),
+        })
 
 
 @csrf_exempt
