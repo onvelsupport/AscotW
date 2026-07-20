@@ -6,13 +6,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('store', '0007_remove_product_gender_product_category_and_more'),
+        ("store", "0007_remove_product_gender_product_category_and_more"),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='order',
-            name='status',
-            field=models.CharField(choices=[('pending', 'Pending'), ('paid', 'Paid'), ('processing', 'Processing'), ('shipped', 'Shipped'), ('delivered', 'Delivered'), ('cancelled', 'Cancelled')], default='pending', max_length=20),
+        migrations.SeparateDatabaseAndState(
+            database_operations=[],
+            state_operations=[
+                migrations.AddField(
+                    model_name="order",
+                    name="status",
+                    field=models.CharField(
+                        choices=[
+                            ("pending", "Pending"),
+                            ("paid", "Paid"),
+                            ("processing", "Processing"),
+                            ("shipped", "Shipped"),
+                            ("delivered", "Delivered"),
+                            ("cancelled", "Cancelled"),
+                        ],
+                        default="pending",
+                        max_length=20,
+                    ),
+                ),
+            ],
         ),
     ]
