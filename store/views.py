@@ -298,120 +298,69 @@ def choose_payment_method(request, order_id):
         'order': order
     })
 
-import logging
-from decimal import Decimal
-
-from django.contrib import messages
-from django.db import transaction
-from django.shortcuts import get_object_or_404, redirect, render
-
-from .forms import CheckoutForm
-from .models import Order, OrderItem, Product
-
-
-logger = logging.getLogger(__name__)
-
-
 def checkout_view(request):
-    cart = request.session.get("cart", {})
+    cart = request.session.get('cart', {})
     cart_items = []
-    total = Decimal("0.00")
+    total = Decimal('0.00')
 
     if not cart:
-        return redirect("cart")
+        return redirect('cart')
 
-    try:
-        for cart_key, item_data in cart.items():
-            product = get_object_or_404(
-                Product,
-                id=item_data["product_id"],
-            )
+    for cart_key, item_data in cart.items():
+        product = get_object_or_404(Product, id=item_data['product_id'])
+        quantity = int(item_data['quantity'])
+        size = item_data.get('size')
 
-            quantity = int(item_data.get("quantity", 1))
-            size = item_data.get("size")
+        item_total = product.current_price * quantity
+        total += item_total
 
-            item_total = product.current_price * quantity
-            total += item_total
+        cart_items.append({
+            'cart_key': cart_key,
+            'product': product,
+            'size': size,
+            'quantity': quantity,
+            'item_total': item_total,
+        })
 
-            cart_items.append({
-                "cart_key": cart_key,
-                "product": product,
-                "size": size,
-                "quantity": quantity,
-                "item_total": item_total,
-            })
-
-    except Exception:
-        logger.exception("Failed to build cart during checkout")
-        messages.error(
-            request,
-            "There is a problem with your cart. Please add the item again.",
-        )
-        return redirect("cart")
-
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CheckoutForm(request.POST)
 
         if form.is_valid():
-            try:
-                with transaction.atomic():
-                    order = Order.objects.create(
-                        full_name=form.cleaned_data["full_name"],
-                        email=form.cleaned_data["email"],
-                        address=form.cleaned_data["address"],
-                        city=form.cleaned_data["city"],
-                        postcode=form.cleaned_data["postcode"],
-                        country=form.cleaned_data["country"],
-                        total_price=total,
-                    )
-
-                    for item in cart_items:
-                        OrderItem.objects.create(
-                            order=order,
-                            product=item["product"],
-                            size=item["size"] or "",
-                            quantity=item["quantity"],
-                            price=item["product"].current_price,
-                        )
-
-                return render(
-                    request,
-                    "store/checkout.html",
-                    {
-                        "form": form,
-                        "cart_items": cart_items,
-                        "total": total,
-                        "show_payment_popup": True,
-                        "order": order,
-                    },
-                )
-
-            except Exception:
-                logger.exception("Checkout failed while creating order")
-
-                messages.error(
-                    request,
-                    "We could not create your order. Please try again.",
-                )
-
-        else:
-            logger.warning(
-                "Checkout form errors: %s",
-                form.errors.as_json(),
+            order = Order.objects.create(
+                full_name=form.cleaned_data['full_name'],
+                email=form.cleaned_data['email'],
+                address=form.cleaned_data['address'],
+                city=form.cleaned_data['city'],
+                postcode=form.cleaned_data['postcode'],
+                country=form.cleaned_data['country'],
+                total_price=total,
             )
+
+            for item in cart_items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item['product'],
+                    size=item['size'],
+                    quantity=item['quantity'],
+                    price=item['product'].current_price,
+                )
+
+            return render(request, 'store/checkout.html', {
+    'form': form,
+    'cart_items': cart_items,
+    'total': total,
+    'show_payment_popup': True,
+    'order': order,
+})
 
     else:
         form = CheckoutForm()
 
-    return render(
-        request,
-        "store/checkout.html",
-        {
-            "form": form,
-            "cart_items": cart_items,
-            "total": total,
-        },
-    )
+    return render(request, 'store/checkout.html', {
+        'form': form,
+        'cart_items': cart_items,
+        'total': total,
+    })
 
 def tracking(request):
     return render(request, 'store/tracking.html')
