@@ -125,9 +125,12 @@ SQUARE_ENVIRONMENT = os.getenv("SQUARE_ENVIRONMENT", "production")
 SQUARE_WEBHOOK_SIGNATURE_KEY = os.getenv("SQUARE_WEBHOOK_SIGNATURE_KEY")
 SQUARE_WEBHOOK_URL = os.getenv(
     "SQUARE_WEBHOOK_URL",
-    "https://www.ascotw.com/square/webhook/"
+    "https://www.ascotwatchescom/square/webhook/"
 )
 
-
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "ascotw <orders@ascotw.shop>")
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "ASCOTW <orders@ascotwatches.com>",
+)
