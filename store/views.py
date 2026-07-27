@@ -84,34 +84,47 @@ def send_order_confirmation_email(order, session):
 
     delivery_start = date.today() + timedelta(days=1)
     delivery_end = date.today() + timedelta(days=2)
-    
 
     subject = f"ASCOTW Order Confirmation #{order.order_number}"
 
     context = {
-        'order': order,
-        'order_items': order_items,
-        'tracking_url': 'https://ascotw.com/tracking/',
-        'payment_method': payment_method_label,
-        'subtotal': order.total_price,
-        'delivery_cost': 0,
-        'delivery_discount': 0,
-        'discount': 0,
-        'total': order.total_price,
-        'delivery_start': delivery_start.strftime("%d %B"),
-        'delivery_end': delivery_end.strftime("%d %B %Y"),
+        "order": order,
+        "order_items": order_items,
+        "tracking_url": "https://ascotwatches.com/tracking/",
+        "payment_method": payment_method_label,
+        "subtotal": order.total_price,
+        "delivery_cost": 0,
+        "delivery_discount": 0,
+        "discount": 0,
+        "total": order.total_price,
+        "delivery_start": delivery_start.strftime("%d %B"),
+        "delivery_end": delivery_end.strftime("%d %B %Y"),
     }
 
-    text_content = render_to_string('store/emails/order_confirmation.txt', context)
-    html_content = render_to_string('store/emails/order_confirmation.html', context)
+    text_content = render_to_string(
+        "store/emails/order_confirmation.txt",
+        context,
+    )
 
-    resend.Emails.send({
-        "from": settings.DEFAULT_FROM_EMAIL,
+    html_content = render_to_string(
+        "store/emails/order_confirmation.html",
+        context,
+    )
+
+    from_email = "ASCOTW <orders@ascotwatches.com>"
+
+    print("Resend sender:", repr(from_email))
+    print("Sending confirmation to:", order.email)
+
+    response = resend.Emails.send({
+        "from": from_email,
         "to": [order.email],
         "subject": subject,
         "html": html_content,
         "text": text_content,
     })
+
+    print("Resend response:", response)
 
 def home(request):
     products = Product.objects.all()
