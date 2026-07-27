@@ -447,88 +447,62 @@ def collection(request):
 def stripe_webhook(request):
     print("Webhook endpoint hit")
 
-    payload = request.body
-    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
-    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
-
     try:
-        event = stripe.Webhook.construct_event(
-            payload,
-            sig_header,
-            endpoint_secret,
-        )
-    except ValueError as e:
-        print("Invalid payload:", repr(e))
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
-        print("Invalid signature:", repr(e))
-        return HttpResponse(status=400)
+        payload = request.body
+        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+        endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
 
-    print("Event verified:", event["type"])
+        event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
+        print("Event verified:", event['type'])
 
-    if event["type"] != "checkout.session.completed":
+        if event['type'] == 'checkout.session.completed':
+            print("Checkout session completed")
+
+            session = event["data"]["object"]
+            session_id = session["id"]
+            metadata = session["metadata"]
+            order_id = metadata["order_id"]
+
+            print("Session ID:", session_id)
+            print("Order ID from metadata:", order_id)
+
+            if not order_id:
+                print("No order_id found. Stripe test event or missing metadata.")
+                return HttpResponse(status=200)
+
+            try:
+                order = Order.objects.get(id=order_id)
+                print("Order found:", order.order_number)
+            except Order.DoesNotExist:
+                print("Order not found:", order_id)
+                return HttpResponse(status=200)
+
+            if not order.is_paid:
+                order.is_paid = True
+                order.save()
+                print("Order marked as paid")
+            else:
+                print("Order was already marked as paid")
+
+            try:
+                send_order_confirmation_email(order, session)
+                print("HTML email sent successfully to:", order.email)
+            except Exception as e:
+                print("Email sending failed:", str(e))
+
         return HttpResponse(status=200)
 
-    session = event["data"]["object"]
-    session_id = session.get("id")
+    except ValueError as e:
+        print("Invalid payload:", str(e))
+        return HttpResponse(status=400)
 
-    metadata = session.get("metadata") or {}
-    order_id = metadata.get("order_id")
+    except stripe.error.SignatureVerificationError as e:
+        print("Invalid signature:", str(e))
+        return HttpResponse(status=400)
 
-    print("Checkout session completed")
-    print("Session ID:", session_id)
-    print("Metadata:", metadata)
-    print("Order ID from metadata:", order_id)
-
-    if not order_id:
-        print("ERROR: No order_id found in Stripe metadata")
-        return HttpResponse(
-            "Missing order_id",
-            status=400,
-        )
-
-    try:
-        order = Order.objects.get(id=order_id)
-        print("Order found:", order.order_number)
-    except Order.DoesNotExist:
-        print("ERROR: Order not found:", order_id)
-        return HttpResponse(
-            "Order not found",
-            status=404,
-        )
-
-    if not order.is_paid:
-        order.is_paid = True
-        order.save(update_fields=["is_paid"])
-        print("Order marked as paid")
-    else:
-        print("Order was already marked as paid")
-
-    customer_details = session.get("customer_details") or {}
-
-    customer_email = (
-        customer_details.get("email")
-        or session.get("customer_email")
-        or order.email
-    )
-
-    print("Order email:", order.email)
-    print("Stripe customer email:", customer_email)
-    print("Attempting to send confirmation email")
-
-    try:
-        send_order_confirmation_email(order, session)
-        print("HTML email sent successfully to:", customer_email)
     except Exception as e:
-        print("EMAIL SENDING FAILED:", repr(e))
-
-        # Returning 500 allows Stripe to retry the webhook.
-        return HttpResponse(
-            "Email sending failed",
-            status=500,
-        )
-
-    return HttpResponse(status=200)
+        print("Webhook unexpected error:", str(e))
+        return HttpResponse(status=200)
     
 def search(request):
     query = request.GET.get('q', '').strip()
